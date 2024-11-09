@@ -3,25 +3,30 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>تحويل ملف SVG إلى PNG</title>
+    <title>Convert SVG To PNG</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/water.css@2/out/water.css">
     <style>
-        body{
+        *{
+            text-align: center;
+        }
+        input{
+            margin: 1rem auto;
             text-align: center;
         }
         #canvasContainer {
             display: none; /* إخفاء الحاوية */
         }
-        
     </style>
 </head>
 <body>
 
-    
-    <h1>تحويل ملف SVG إلى PNG</h1>
+    <h1>Convert SVG To PNG</h1>
 
-    <!-- نموذج لتحميل ملف SVG -->
-    <input type="file" id="fileInput" accept=".svg" />
-    <button id="convertButton">تحويل إلى PNG</button>
+    <div>
+        <input type="file" id="fileInput" accept=".svg" />
+    </div>
+        <button id="convertButton">Convert</button>
+        <button id="pngDownloadBtn" style="display:none;">Download</button>
 
     <div id="canvasContainer">
         <canvas id="canvas" width="1600" height="1600"></canvas>
@@ -76,12 +81,17 @@
                     img.src = pngUrl;
                     document.body.appendChild(img); // إضافة الصورة المحولة إلى الصفحة
 
-                    // إظهار الـ Canvas (اختياري)
-                    const canvasContainer = document.getElementById('canvasContainer');
-                    canvasContainer.style.display = 'block';
-                    const canvas = document.getElementById('canvas');
-                    const ctx = canvas.getContext('2d');
-                    ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+                    // إظهار الزر لتحميل الصورة
+                    const pngDownloadBtn = document.getElementById('pngDownloadBtn');
+                    pngDownloadBtn.style.display = 'inline-block';
+                    
+                    // تعيين رابط التحميل للزر
+                    pngDownloadBtn.onclick = () => {
+                        const link = document.createElement('a');
+                        link.href = pngUrl;
+                        link.download = 'converted-image.png'; // تعيين اسم الملف عند التحميل
+                        link.click(); // محاكاة نقرة على الرابط لتحميل الصورة
+                    };
                 } catch (error) {
                     alert('فشل التحويل: ' + error.message);
                 }
@@ -92,5 +102,4 @@
     </script>
 
 </body>
- 
 </html>
