@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تحويل ملف SVG إلى PNG</title>
+    <style>
+        #canvasContainer {
+            display: none; /* إخفاء الحاوية */
+        }
+    </style>
+</head>
+<body>
+
+    
+    <h1>تحويل ملف SVG إلى PNG</h1>
+
+    <!-- نموذج لتحميل ملف SVG -->
+    <input type="file" id="fileInput" accept=".svg" />
+    <button id="convertButton">تحويل إلى PNG</button>
+
+    <div id="canvasContainer">
+        <canvas id="canvas" width="1600" height="1600"></canvas>
+    </div>
+
+    <script>
+        async function convertSvgToPng(svgData, width, height) {
+            const canvas = document.createElement('canvas');
+            canvas.width = width;
+            canvas.height = height;
+
+            const ctx = canvas.getContext('2d');
+            const svgBlob = new Blob([svgData], { type: 'image/svg+xml;charset=utf-8' });
+            const url = URL.createObjectURL(svgBlob);
+
+            const img = new Image();
+            img.src = url;
+
+            return new Promise((resolve, reject) => {
+                img.onload = () => {
+                    ctx.drawImage(img, 0, 0, width, height);
+                    canvas.toBlob((blob) => {
+                        URL.revokeObjectURL(url);
+                        resolve(blob);
+                    }, 'image/png');
+                };
+
+                img.onerror = (err) => {
+                    URL.revokeObjectURL(url);
+                    reject(err);
+                };
+            });
+        }
+
+        document.getElementById('convertButton').addEventListener('click', async () => {
+            const fileInput = document.getElementById('fileInput');
+            const file = fileInput.files[0];
+
+            if (!file) {
+                alert('يرجى تحميل ملف SVG.');
+                return;
+            }
+
+            const reader = new FileReader();
+            reader.onload = async (event) => {
+                const svgData = event.target.result;
+
+                try {
+                    const pngBlob = await convertSvgToPng(svgData, 1600, 1600);
+                    const pngUrl = URL.createObjectURL(pngBlob);
+                    const img = new Image();
+                    img.src = pngUrl;
+                    document.body.appendChild(img); // إضافة الصورة المحولة إلى الصفحة
+
+                    // إظهار الـ Canvas (اختياري)
+                    const canvasContainer = document.getElementById('canvasContainer');
+                    canvasContainer.style.display = 'block';
+                    const canvas = document.getElementById('canvas');
+                    const ctx = canvas.getContext('2d');
+                    ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+                } catch (error) {
+                    alert('فشل التحويل: ' + error.message);
+                }
+            };
+
+            reader.readAsText(file); // قراءة محتوى الملف كنص
+        });
+    </script>
+
+</body>
+ 
+</html>
