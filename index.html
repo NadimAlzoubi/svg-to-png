@@ -1,106 +1,646 @@
 <!DOCTYPE html>
-<html lang="ar">
+<html lang="en" dir="ltr">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Convert SVG To PNG</title>
-    <link rel="icon" href="svg1.svg" type="image/svg+xml">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/water.css@2/out/water.css">
-    <style>
-        *{
-            text-align: center;
-        }
-        input{
-            margin: 1rem auto;
-            text-align: center;
-        }
-        #canvasContainer {
-            display: none; /* إخفاء الحاوية */
-        }
-    </style>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Free Online SVG to PNG Converter Tool - High Quality & Fast</title>
+
+  <meta name="description" content="Convert your SVG (Scalable Vector Graphics) files to high-quality PNG (Portable Network Graphics) images instantly online. Preserve vector sharpness and custom dimensions." />
+  <meta name="keywords" content="svg to png, online converter, free svg converter, vector to raster, nadim.pro, image converter" />
+  <meta name="author" content="nadim.pro" />
+  <meta name="robots" content="index, follow" />
+
+  <meta property="og:title" content="SVG to PNG Converter Tool" />
+  <meta property="og:description" content="Convert SVG files to high-resolution PNG images quickly and easily, preserving quality and custom dimensions." />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="YOUR_WEBSITE_URL_HERE" />
+  <link rel="icon" href="favicon.ico" type="image/x-icon" />
+  <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png" />
+  <link rel="mask-icon" href="safari-pinned-tab.svg" color="#5bbad5" />
+  <meta name="theme-color" content="#60a5fa" />
+
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;700&display=swap" rel="stylesheet">
+
+  <style>
+    /* ============ Color Variables ============ */
+    :root{
+      --bg-1: #0f1724;
+      --bg-2: #0b1220;
+      --accent-1: #6ee7b7;     /* Light Green */
+      --accent-2: #60a5fa;     /* Light Blue */
+      --glass: rgba(255,255,255,0.06);
+      --glass-2: rgba(255,255,255,0.04);
+      --muted: rgba(255,255,255,0.72);
+      --card-radius: 16px;
+      --shadow-1: 0 10px 30px rgba(2,6,23,0.6);
+    }
+
+    /* ============ Base ============ */
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      background: radial-gradient(1200px 600px at 10% 10%, rgba(96,165,250,0.08), transparent 8%),
+                  radial-gradient(1000px 500px at 90% 85%, rgba(110,231,183,0.06), transparent 10%),
+                  linear-gradient(180deg, var(--bg-1), var(--bg-2));
+      color:var(--muted);
+      -webkit-font-smoothing:antialiased;
+      -moz-osx-font-smoothing:grayscale;
+      padding:3.5rem 1.25rem;
+      display:flex;
+      min-height: 100vh;
+      align-items: flex-start;
+      justify-content:center;
+      gap:1.5rem;
+    }
+
+    /* ============ Main Container ============ */
+    .app {
+      width: min(1200px, 96%);
+      display:grid;
+      grid-template-columns: 440px 1fr;
+      gap:1.5rem;
+      align-items:start;
+    }
+
+    /* ============ Side Panel (Info + Actions) ============ */
+    .panel {
+      background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+      border-radius: var(--card-radius);
+      padding:1.75rem;
+      box-shadow: var(--shadow-1);
+      border: 1px solid rgba(255,255,255,0.03);
+      position:relative;
+      overflow:hidden;
+      min-height:420px;
+    }
+
+    /* Decorative Background */
+    .panel::after{
+      content:"";
+      position:absolute;
+      inset:auto -80px -120px auto;
+      width:320px;height:320px;
+      background: conic-gradient(from 200deg, rgba(96,165,250,0.06), rgba(110,231,183,0.06));
+      filter: blur(30px);
+      transform: rotate(25deg);
+      pointer-events:none;
+    }
+
+    .brand {
+      display:flex;
+      gap:.75rem;
+      align-items:center;
+      margin-bottom:1rem;
+    }
+    .logo {
+      width:48px;height:48px;border-radius:12px;
+      background: linear-gradient(135deg,var(--accent-2),var(--accent-1));
+      display:flex;align-items:center;justify-content:center;
+      box-shadow: 0 6px 18px rgba(79,70,229,0.12);
+      flex:0 0 48px;
+    }
+    .logo svg{width:24px;height:24px;fill:white;opacity:.95}
+    .brand h2{margin:0;color:#fff;font-size:1.05rem;letter-spacing:.2px}
+    .brand p{margin:0;font-size:.82rem;color:rgba(255,255,255,0.7)}
+
+    .panel .hint{
+      margin-top:.8rem;
+      font-size:.88rem;color:rgba(255,255,255,0.6);
+      line-height:1.5;
+    }
+
+    /* ============ Modern Dropzone ============ */
+    .dropzone {
+      margin-top:1rem;
+      border-radius:12px;
+      padding:1rem;
+      border:1px dashed rgba(255,255,255,0.06);
+      background: linear-gradient(180deg, rgba(255,255,255,0.01), rgba(255,255,255,0.00));
+      display:flex;
+      gap:.8rem;
+      align-items:center;
+      justify-content:center;
+      flex-direction:column;
+      transition: all .22s ease;
+      cursor:pointer;
+      min-height:160px;
+      position:relative;
+    }
+    .dropzone:hover{transform:translateY(-4px);border-color:rgba(96,165,250,0.18)}
+    .dropzone .big {
+      font-size:1rem;
+      color:rgba(255,255,255,0.9);
+      font-weight:600;
+    }
+    .dropzone .sub {
+      font-size:.86rem;color:rgba(255,255,255,0.6);
+    }
+    .dropzone input[type="file"]{
+      position:absolute;inset:0;opacity:0;cursor:pointer;
+    }
+
+    /* Main Convert Button */
+    .actions {
+      display:flex;
+      gap:.7rem;
+      margin-top:1rem;
+    }
+    .btn {
+      padding:.7rem 1.1rem;
+      border-radius:12px;
+      border:none;
+      cursor:pointer;
+      font-weight:700;
+      letter-spacing:.3px;
+      background: linear-gradient(90deg,var(--accent-1),var(--accent-2));
+      color:#06202a;
+      box-shadow: 0 8px 30px rgba(96,165,250,0.12);
+      transition: transform .14s ease, box-shadow .14s ease;
+    }
+    .btn.secondary{
+      background: transparent;
+      border:1px solid rgba(255,255,255,0.06);
+      color:var(--muted);
+      box-shadow:none;
+    }
+    .btn:active{transform:translateY(2px)}
+    .small-note{margin-top:1rem;font-size:.82rem;color:rgba(255,255,255,0.5)}
+
+    /* ============ Preview Panel (Right) ============ */
+    .preview {
+      background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+      border-radius: var(--card-radius);
+      padding:1.5rem;
+      box-shadow: var(--shadow-1);
+      border: 1px solid rgba(255,255,255,0.03);
+      min-height:420px;
+      display:flex;
+      flex-direction:column;
+      gap:1rem;
+    }
+
+    .preview-head {
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:1rem;
+    }
+    .preview-head h3{margin:0;color:#fff;font-size:1.05rem}
+    .meta {font-size:.85rem;color:rgba(255,255,255,0.6)}
+
+    /* Image Card — Maintains Aspect Ratio */
+    .canvas-wrap {
+      margin-top:.6rem;
+      flex:1;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      min-height:260px;
+      background: linear-gradient(180deg, rgba(255,255,255,0.01), transparent);
+      border-radius:12px;
+      position:relative;
+      overflow:hidden;
+    }
+
+    /* Aspect-Ratio Box — using CSS aspect-ratio */
+    .frame {
+      width: min(100%, 820px);
+      max-width:100%;
+      aspect-ratio: 16/10; /* Default, will be adjusted by JS if needed */
+      background: repeating-conic-gradient(from 0deg, rgba(255,255,255,0.018) 0deg 30deg, rgba(0,0,0,0.02) 30deg 60deg);
+      border-radius:10px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding:1rem;
+      transform: translateY(0);
+      transition: transform .18s ease;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.02), 0 10px 30px rgba(2,6,23,0.6);
+    }
+
+    .frame img, .frame canvas {
+      max-width:100%;
+      max-height:100%;
+      border-radius:6px;
+      object-fit: contain;
+      box-shadow: 0 8px 24px rgba(2,6,23,0.3);
+      background: white;
+    }
+
+    /* Small control panel below the image */
+    .preview-controls {
+      display:flex;
+      gap:.6rem;
+      align-items:center;
+      justify-content:flex-end;
+    }
+    .badge {
+      background: rgba(255,255,255,0.02);
+      border:1px solid rgba(255,255,255,0.03);
+      padding:.4rem .6rem;
+      border-radius:999px;
+      color:rgba(255,255,255,0.7);
+      font-size:.82rem;
+    }
+
+    /* ============ Subtle Aesthetic Effects ============ */
+    .pulse {
+      position:absolute;
+      inset: auto 12px 12px auto;
+      width:48px;height:48px;border-radius:12px;
+      background: linear-gradient(90deg,var(--accent-1),var(--accent-2));
+      filter: blur(14px);
+      opacity:.12;pointer-events:none;
+    }
+
+    /* ============ Responsive ============ */
+    @media (max-width: 980px){
+      body { flex-direction: column; }
+      .app{grid-template-columns:1fr; padding-bottom:2rem; width: 100%;}
+      .panel{order:2}
+      .preview{order:1}
+      .canvas-wrap{min-height:220px}
+    }
+
+  </style>
 </head>
 <body>
 
-    <h1>Convert SVG To PNG</h1>
+  <div class="app" role="application" aria-label="SVG to PNG UI">
+    <aside class="panel" aria-labelledby="panel-title">
+      <div class="brand" id="panel-title">
+        <div class="logo" aria-hidden="true">
+          <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <path d="M3 12a9 9 0 1118 0 9 9 0 01-18 0zm5-2l7-4v10l-7-4z"></path>
+          </svg>
+        </div>
+        <div>
+          <h2>SVG → PNG</h2>
+          <p>A light and fast conversion interface — preserve your dimensions and quality.</p>
+        </div>
+      </div>
 
-    <div>
-        <input type="file" id="fileInput" accept=".svg" />
-    </div>
-        <button id="convertButton">Convert</button>
-        <button id="pngDownloadBtn" style="display:none;">Download</button>
+      <p class="hint">Drag an SVG file below or click to select a file. The interface maintains the original image proportions and displays a high-quality preview.</p>
 
-    <div id="canvasContainer">
-        <canvas id="canvas" width="1600" height="1600"></canvas>
-    </div>
+      <label class="dropzone" id="dropzone">
+        <div class="big">Drag & drop here or click to select</div>
+        <div class="sub">Only SVG supported — the image will be previewed before conversion</div>
+        <input id="fileInput" type="file" accept=".svg,image/svg+xml" aria-label="Upload SVG file">
+      </label>
 
-    <script>
-        async function convertSvgToPng(svgData, width, height) {
-            const canvas = document.createElement('canvas');
-            canvas.width = width;
-            canvas.height = height;
+      <div class="actions" role="group" aria-label="actions">
+        <button class="btn" id="convertButton" type="button">Start Conversion</button>
+        <button class="btn secondary" id="resetButton" type="button">Clear</button>
+      </div>
 
-            const ctx = canvas.getContext('2d');
-            const svgBlob = new Blob([svgData], { type: 'image/svg+xml;charset=utf-8' });
-            const url = URL.createObjectURL(svgBlob);
+      <div class="small-note">Output size depends on the original SVG dimensions — quality and size can be adjusted later.</div>
 
-            const img = new Image();
-            img.src = url;
+      <div class="pulse" aria-hidden="true"></div>
+    </aside>
 
-            return new Promise((resolve, reject) => {
-                img.onload = () => {
-                    ctx.drawImage(img, 0, 0, width, height);
-                    canvas.toBlob((blob) => {
-                        URL.revokeObjectURL(url);
-                        resolve(blob);
-                    }, 'image/png');
-                };
+    <main class="preview" aria-labelledby="preview-title">
+      <div class="preview-head">
+        <h3 id="preview-title">Preview</h3>
+        <div class="meta">No file selected</div>
+      </div>
 
-                img.onerror = (err) => {
-                    URL.revokeObjectURL(url);
-                    reject(err);
-                };
-            });
+      <div class="canvas-wrap" aria-live="polite">
+        <div class="frame" id="frame">
+          <div style="text-align:center;color:rgba(255,255,255,0.35)">
+            <svg width="72" height="72" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <rect x="2" y="4" width="20" height="16" rx="2" stroke="rgba(255,255,255,0.18)" stroke-width="1.2"></rect>
+              <path d="M8 10l3 3 5-5" stroke="rgba(255,255,255,0.18)" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"></path>
+            </svg>
+            <div style="margin-top:.6rem;font-weight:600">No preview yet</div>
+            <div style="font-size:.85rem;color:rgba(255,255,255,0.5)">Select an SVG file to display it here</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="preview-controls">
+        <div class="badge" id="svgSize">—</div>
+        <div class="badge" id="svgRatio">—</div>
+      </div>
+    </main>
+  </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  // --- Define UI elements ---
+  const dropzone = document.getElementById('dropzone');
+  const fileInput = document.getElementById('fileInput');
+  const convertButton = document.getElementById('convertButton');
+  const resetButton = document.getElementById('resetButton');
+  const actionsContainer = document.querySelector('.actions'); // Button container
+  const frame = document.getElementById('frame');
+  const svgSizeBadge = document.getElementById('svgSize');
+  const svgRatioBadge = document.getElementById('svgRatio');
+  const previewMeta = document.querySelector('.preview-head .meta');
+
+  // --- State variables ---
+  let currentSvgText = null;
+  let currentSvgUrl = null;
+  let currentPngBlob = null;
+  let currentPngUrl = null;
+  let currentFileName = 'converted-image.png';
+
+  // --- Helper functions ---
+
+  /**
+   * Calculates the aspect ratio as a string (e.g., "16:9").
+   * @param {number} w - Width
+   * @param {number} h - Height
+   * @returns {string}
+   */
+  function getRatioText(w, h) {
+    const gcd = (a, b) => (b ? gcd(b, a % b) : a);
+    const divisor = gcd(Math.round(w), Math.round(h));
+    return `${Math.round(w / divisor)}:${Math.round(h / divisor)}`;
+  }
+
+  /**
+   * Resets the UI to its initial state.
+   */
+  function resetUI() {
+    // Release used resources to avoid memory leaks
+    if (currentSvgUrl) URL.revokeObjectURL(currentSvgUrl);
+    if (currentPngUrl) URL.revokeObjectURL(currentPngUrl);
+
+    // Reset state variables
+    currentSvgText = null;
+    currentSvgUrl = null;
+    currentPngBlob = null;
+    currentPngUrl = null;
+    fileInput.value = ''; // Clear the file input field
+
+    // Restore default preview content
+    frame.innerHTML = `
+      <div style="text-align:center;color:rgba(255,255,255,0.35)">
+        <svg width="72" height="72" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <rect x="2" y="4" width="20" height="16" rx="2" stroke="rgba(255,255,255,0.18)" stroke-width="1.2"></rect>
+          <path d="M8 10l3 3 5-5" stroke="rgba(255,255,255,0.18)" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"></path>
+        </svg>
+        <div style="margin-top:.6rem;font-weight:600">No preview yet</div>
+        <div style="font-size:.85rem;color:rgba(255,255,255,0.5)">Select an SVG file to display it here</div>
+      </div>
+    `;
+    frame.style.removeProperty('aspect-ratio');
+
+    // Update side info
+    svgSizeBadge.textContent = '—';
+    svgRatioBadge.textContent = '—';
+    previewMeta.textContent = 'No file selected';
+
+    // **[FIX]** Remove the download button if it exists
+    const existingDownloadBtn = document.getElementById('pngDownloadBtn');
+    if (existingDownloadBtn) {
+      existingDownloadBtn.remove();
+    }
+  }
+
+  /**
+   * Extracts dimensions (width, height) from SVG text.
+   * @param {string} svgText - The content of the SVG file as text.
+   * @returns {{width: number, height: number}}
+   */
+  function parseSvgDimensions(svgText) {
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(svgText, 'image/svg+xml');
+    const svg = doc.querySelector('svg');
+    if (!svg) throw new Error('SVG file does not contain an <svg> element');
+
+    const parseUnit = (val) => val ? parseFloat(val.match(/-?[\d.]+/)?.[0] || 0) : 0;
+    
+    let width = parseUnit(svg.getAttribute('width'));
+    let height = parseUnit(svg.getAttribute('height'));
+
+    if ((!width || !height) && svg.hasAttribute('viewBox')) {
+      const vb = svg.getAttribute('viewBox').trim().split(/\s+|,/).map(Number);
+      if (vb.length === 4) {
+        width = vb[2];
+        height = vb[3];
+      }
+    }
+    // Default value if dimensions are not specified
+    if (!width || !height) return { width: 512, height: 512 };
+    
+    return { width: Math.max(1, width), height: Math.max(1, height) };
+  }
+
+  /**
+   * Displays a preview of the selected SVG file.
+   * @param {string} svgText - The SVG content.
+   * @param {{width: number, height: number}} dims - The image dimensions.
+   */
+  function showSvgPreview(svgText, dims) {
+    if (currentSvgUrl) URL.revokeObjectURL(currentSvgUrl);
+    
+    const blob = new Blob([svgText], { type: 'image/svg+xml;charset=utf-8' });
+    currentSvgUrl = URL.createObjectURL(blob);
+    
+    frame.innerHTML = ''; // Clear previous preview
+    const img = document.createElement('img');
+    img.src = currentSvgUrl;
+    img.alt = 'SVG Preview';
+    img.style.objectFit = 'contain';
+
+    frame.style.aspectRatio = `${dims.width} / ${dims.height}`;
+    frame.appendChild(img);
+  }
+  
+  /**
+   * Displays a preview of the PNG image after conversion.
+   * @param {Blob} blob - The image data.
+   */
+  function showPngPreview(blob) {
+    if (currentPngUrl) URL.revokeObjectURL(currentPngUrl);
+    currentPngBlob = blob;
+    currentPngUrl = URL.createObjectURL(blob);
+    
+    frame.innerHTML = '';
+    const img = document.createElement('img');
+    img.src = currentPngUrl;
+    img.alt = 'PNG Preview';
+    img.style.objectFit = 'contain';
+    frame.appendChild(img);
+  }
+
+  /**
+   * **[NEW]** Creates and adds a PNG download button.
+   */
+  function addDownloadButton() {
+    // Ensure no previous download button exists
+    if (document.getElementById('pngDownloadBtn')) return;
+
+    const downloadBtn = document.createElement('button');
+    downloadBtn.id = 'pngDownloadBtn';
+    downloadBtn.className = 'btn'; // Use the same style as the main button
+    downloadBtn.textContent = 'Download PNG';
+    downloadBtn.type = 'button';
+
+    downloadBtn.addEventListener('click', () => {
+      if (!currentPngBlob) {
+        alert('No file is ready for download.');
+        return;
+      }
+      try {
+        const url = URL.createObjectURL(currentPngBlob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = currentFileName;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        setTimeout(() => URL.revokeObjectURL(url), 100); // Release memory
+      } catch (err) {
+        console.error('Error creating download link:', err);
+        alert('Failed to initiate the download.');
+      }
+    });
+
+    actionsContainer.appendChild(downloadBtn);
+  }
+
+  /**
+   * The core conversion function from SVG to PNG.
+   * @param {string} svgData - The SVG content.
+   * @returns {Promise<{blob: Blob, width: number, height: number}>}
+   */
+  async function convertSvgToPng(svgData) {
+    const dims = parseSvgDimensions(svgData);
+    const { width, height } = dims;
+
+    const canvas = document.createElement('canvas');
+    canvas.width = width;
+    canvas.height = height;
+    const ctx = canvas.getContext('2d');
+
+    const svgBlob = new Blob([svgData], { type: 'image/svg+xml;charset=utf-8' });
+    const url = URL.createObjectURL(svgBlob);
+    const img = new Image();
+
+    return new Promise((resolve, reject) => {
+      img.onload = () => {
+        try {
+          ctx.drawImage(img, 0, 0, width, height);
+          canvas.toBlob((blob) => {
+            URL.revokeObjectURL(url);
+            if (!blob) return reject(new Error('Failed to create PNG from Canvas'));
+            resolve({ blob, width, height });
+          }, 'image/png');
+        } catch (err) {
+          URL.revokeObjectURL(url);
+          reject(err);
         }
+      };
+      img.onerror = () => {
+        URL.revokeObjectURL(url);
+        reject(new Error('Failed to load SVG image. It may contain unsupported external resources.'));
+      };
+      img.src = url;
+    });
+  }
 
-        document.getElementById('convertButton').addEventListener('click', async () => {
-            const fileInput = document.getElementById('fileInput');
-            const file = fileInput.files[0];
+  /**
+   * Handles the file that has been selected or dragged.
+   * @param {File} file
+   */
+  async function handleFile(file) {
+    if (!file) return;
+    if (!file.type.includes('svg') && !file.name.toLowerCase().endsWith('.svg')) {
+      alert('Please select an SVG file only.');
+      return;
+    }
+    
+    // Reset UI before starting
+    resetUI();
+    
+    try {
+      currentSvgText = await file.text();
+      const dims = parseSvgDimensions(currentSvgText);
+      currentFileName = file.name.replace(/\.svg$/i, '.png');
+      
+      showSvgPreview(currentSvgText, dims);
 
-            if (!file) {
-                alert('يرجى تحميل ملف SVG.');
-                return;
-            }
+      // Update info
+      svgSizeBadge.textContent = `${dims.width} × ${dims.height}px`;
+      svgRatioBadge.textContent = getRatioText(dims.width, dims.height);
+      previewMeta.textContent = `File: ${file.name}`;
 
-            const reader = new FileReader();
-            reader.onload = async (event) => {
-                const svgData = event.target.result;
+    } catch (err) {
+      console.error('Error reading file:', err);
+      alert('Failed to read file: ' + err.message);
+      resetUI();
+    }
+  }
 
-                try {
-                    const pngBlob = await convertSvgToPng(svgData, 1600, 1600);
-                    const pngUrl = URL.createObjectURL(pngBlob);
-                    const img = new Image();
-                    img.src = pngUrl;
-                    document.body.appendChild(img); // إضافة الصورة المحولة إلى الصفحة
+  // --- Event listeners ---
 
-                    // إظهار الزر لتحميل الصورة
-                    const pngDownloadBtn = document.getElementById('pngDownloadBtn');
-                    pngDownloadBtn.style.display = 'inline-block';
-                    
-                    // تعيين رابط التحميل للزر
-                    pngDownloadBtn.onclick = () => {
-                        const link = document.createElement('a');
-                        link.href = pngUrl;
-                        link.download = 'converted-image.png'; // تعيين اسم الملف عند التحميل
-                        link.click(); // محاكاة نقرة على الرابط لتحميل الصورة
-                    };
-                } catch (error) {
-                    alert('فشل التحويل: ' + error.message);
-                }
-            };
+  // Drag and drop events
+  ['dragenter', 'dragover'].forEach(eventName => {
+    dropzone.addEventListener(eventName, (e) => {
+      e.preventDefault();
+      dropzone.style.borderColor = 'var(--accent-2)';
+    });
+  });
+  ['dragleave', 'drop'].forEach(eventName => {
+    dropzone.addEventListener(eventName, () => {
+      dropzone.style.borderColor = '';
+    });
+  });
+  dropzone.addEventListener('drop', (e) => {
+    e.preventDefault();
+    if (e.dataTransfer?.files?.[0]) {
+      handleFile(e.dataTransfer.files[0]);
+    }
+  });
 
-            reader.readAsText(file); // قراءة محتوى الملف كنص
-        });
-    </script>
+  // File selection event
+  fileInput.addEventListener('change', (e) => {
+    if (e.target.files?.[0]) {
+      handleFile(e.target.files[0]);
+    }
+  });
+
+  // Clear button event
+  resetButton.addEventListener('click', resetUI);
+
+  // Convert button event
+  convertButton.addEventListener('click', async () => {
+    if (!currentSvgText) {
+      alert('Please select an SVG file first.');
+      return;
+    }
+
+    convertButton.disabled = true;
+    convertButton.textContent = 'Converting...';
+
+    try {
+      const { blob, width, height } = await convertSvgToPng(currentSvgText);
+      showPngPreview(blob);
+      
+      // Update info after conversion
+      previewMeta.textContent = 'Converted successfully. Ready to download.';
+      svgSizeBadge.textContent = `${width} × ${height}px (PNG)`;
+
+      // **[FIX]** Add the download button
+      addDownloadButton();
+
+    } catch (err) {
+      console.error('Conversion failed:', err);
+      alert('An error occurred during conversion: ' + err.message);
+      previewMeta.textContent = 'Conversion failed';
+    } finally {
+      convertButton.disabled = false;
+      convertButton.textContent = 'Start Conversion';
+    }
+  });
+
+  // --- Initial state ---
+  resetUI();
+});
+</script>
 
 </body>
 </html>
